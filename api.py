@@ -1,7 +1,9 @@
 import requests
 from decouple import config
 
+# set API_KEY_WEATHERMAP in .env file
 api_key_weathermap = config('API_KEY_WEATHERMAP')
+# set API_KEY_IPSTACK in .env file
 api_key_ipstack = config('API_KEY_IPSTACK')
 
 
@@ -22,8 +24,15 @@ def getLocationWithIpStackApi():
     return ville
 
 
-def getWeatherWithLocation():
+def getPrevisionalWeatherWithLocation():
     res = requests.get(
         'http://api.openweathermap.org/data/2.5/forecast?q=' + getLocationWithIpStackApi() + '&appid=' + api_key_weathermap + '&units=metric')
+    meteo = res.json()
+    return meteo
+
+
+def getCurrentWeatherWithLocation():
+    res = requests.get(
+        'http://api.openweathermap.org/data/2.5/weather?q=' + getLocationWithIpStackApi() + '&appid=' + api_key_weathermap + '&units=metric')
     meteo = res.json()
     return meteo

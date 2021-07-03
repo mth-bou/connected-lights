@@ -1,9 +1,10 @@
-from api import getAllWeatherApi, getWeatherWithLocation
+from api import getAllWeatherApi, getCurrentWeatherWithLocation, getPrevisionalWeatherWithLocation
 from utils import hotOrcold
+from threading import Timer
 
 
-def getTemp(date):
-    data = getWeatherWithLocation()
+def getPrevisionalTemp(date):
+    data = getPrevisionalWeatherWithLocation()
     list = data['list']
     for elem in list:
         if date:
@@ -16,7 +17,7 @@ def getTemp(date):
 
 # Tranches horaires de 3h donc 8ème élément du tableau = 24h
 def getPrevisionalWeatherDate():
-    data = getWeatherWithLocation()
+    data = getPrevisionalWeatherWithLocation()
     list = data['list']
     days = []
     for elem in list:
@@ -26,10 +27,28 @@ def getPrevisionalWeatherDate():
     return days[8]
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    day = getPrevisionalWeatherDate()
-    temp = getTemp(day)
+def getCurrentTemp():
+    data = getCurrentWeatherWithLocation()
+    temp = data['main']['temp']
+    return temp
+
+
+# Function called every 15min to reload right colors with the new temperature
+def update():
+    set_timer()
+    temp = getCurrentTemp()
     hotOrcold(temp)
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+
+def set_timer():
+    t = Timer(5, update).start()
+
+
+if __name__ == '__main__':
+    # day = getPrevisionalWeatherDate()
+    # temp = getPrevisionalTemp(day)
+
+    # First occurence before timer's occurences
+    temp = getCurrentTemp()
+    hotOrcold(temp)
+    set_timer()
